@@ -1,0 +1,31 @@
+DAY 1 — DEVOPS FOUNDATIONS
+
+DevOps = Development + Operations
+
+Main goals:
+- Automation
+- Faster and safer software delivery
+- Repeatable processes
+- Collaboration
+- Reliability
+- Monitoring
+- Infrastructure automation
+- Security
+
+SDLC:
+Requirements → Design → Development → Testing → Deployment → Maintenance
+
+DevOps lifecycle:
+Plan → Code → Build → Test → Security → Release → Deploy → Operate → Monitor → Feedback
+
+CI:
+Frequently integrate code and automatically build/test it.
+
+Continuous Delivery:
+Keep software in a deployable state, with release potentially requiring approval.
+
+Continuous Deployment:
+Automatically deploy successful changes to production.
+
+DevSecOps:
+Integrate security throughout the software development and operations lifecycle.
