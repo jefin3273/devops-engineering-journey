@@ -1,11 +1,23 @@
-from app import add,multiply
+from app import get_response
 
-def test_add():
-	assert add(2,3)==5
 
-def test_multiply():
-	assert multiply(4,5)==20
+def test_root():
+    status, content_type, body = get_response("/")
 
-def test_add_negative_numbers():
-	assert add(-2,-3)==-5
+    assert status == 200
+    assert content_type == "text/plain"
+    assert body == "DevOps CI/CD Demo Application"
 
+
+def test_health():
+    status, content_type, body = get_response("/health")
+
+    assert status == 200
+    assert content_type == "application/json"
+    assert body == '{"status":"healthy"}'
+
+
+def test_not_found():
+    status, content_type, body = get_response("/does-not-exist")
+
+    assert status == 404

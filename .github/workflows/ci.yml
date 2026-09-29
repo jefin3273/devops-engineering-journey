@@ -34,3 +34,7 @@ jobs:
       - name: Run tests
         working-directory: projects/python-ci-pipeline
         run: pytest
+
+      - name: Build Docker image
+        working-directory: projects/python-ci-pipeline
+        run: docker build -t python-ci-demo:${{ github.sha }} .
