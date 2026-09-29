@@ -1,16 +1,24 @@
-name: Python CI
+name: Python CI/CD
 
 on:
   push:
     paths:
       - "projects/python-ci-pipeline/**"
       - ".github/workflows/ci.yml"
+
   pull_request:
     branches:
       - main
     paths:
       - "projects/python-ci-pipeline/**"
       - ".github/workflows/ci.yml"
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  IMAGE_NAME: ghcr.io/jefin3273/devops-engineering-journey/python-ci-demo
 
 jobs:
   test:
@@ -34,3 +42,70 @@ jobs:
       - name: Run tests
         working-directory: projects/python-ci-pipeline
         run: pytest
+
+  build-and-push:
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Docker image
+        working-directory: projects/python-ci-pipeline
+        run: |
+          docker build \
+            -t ${{ env.IMAGE_NAME }}:${{ github.sha }} \
+            .
+
+      - name: Push Docker image
+        run: |
+          docker push \
+            ${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull image from GHCR
+        run: |
+          docker pull ${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+      - name: Deploy container
+        run: |
+          docker run -d \
+            --name python-ci-demo \
+            -p 8000:8000 \
+            ${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+      - name: Wait for application
+        run: sleep 3
+
+      - name: Health check
+        run: |
+          curl --fail http://localhost:8000/health
+
+      - name: Show container logs
+        if: always()
+        run: docker logs python-ci-demo
+
+      - name: Cleanup container
+        if: always()
+        run: |
+          docker stop python-ci-demo || true
+          docker rm python-ci-demo || true
