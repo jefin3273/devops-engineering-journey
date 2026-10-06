@@ -1,0 +1,9 @@
+2026-09-26 INFO Application started
+2026-09-26 INFO Database connected
+2026-09-26 ERROR Database connection failed
+2026-09-26 INFO Retrying database connection
+2026-09-26 ERROR Database connection failed
+2026-09-26 INFO Application started
+2026-09-26 WARN High memory usage
+2026-09-26 ERROR Request timeout
+2026-09-26 INFO Request completed
